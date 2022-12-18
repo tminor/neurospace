@@ -14,7 +14,7 @@
   "Returns a proxied instance of ClassVisitor with an implementation of
   visitMethod."
   ^ClassVisitor [^ClassNode class-node]
-  (proxy [ClassVisitor] [Opcodes/ASM5 class-node]
+  (proxy [ClassVisitor] [Opcodes/ASM9 class-node]
     (visitMethod [access name desc sig ex]
       (let [method-visitor (->method-node access name desc sig ex)]
         (.add ^java.util.List (.methods class-node) method-visitor)
