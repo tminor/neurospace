@@ -1,9 +1,12 @@
 package neurospace.asm;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -36,6 +39,25 @@ public class BlockMetrics {
         return (double)val;
     }
 
+    private static double descValue(String desc) {
+        String re = "(?:(\\[*L)[^;]+;|([BCDFIJSVZ]))";
+        Matcher m = Pattern.compile(re).matcher(desc);
+
+        double val = 0.0;
+
+        while (m.find()) {
+            for (int i = 0; i < m.groupCount(); i++) {
+                char[] chars = m.group(i).toCharArray();
+
+                for (int j = 0; j < chars.length; j++) {
+                    val += Character.getNumericValue(chars[j]);
+                }
+            }
+        }
+
+        return val;
+    }
+
     public static double[] calculate(List<AbstractInsnNode> insnNodes) {
         BlockMetrics m = new BlockMetrics(insnNodes);
 
@@ -57,6 +79,11 @@ public class BlockMetrics {
         }
     }
 
+    private void measure(FieldInsnNode insn) {
+        this.field += descValue(insn.desc);
+        measure((AbstractInsnNode)insn);
+    }
+
     private void measure(InsnNode insn) {
         if (insn.getOpcode() != Opcodes.ATHROW) {
             measure((AbstractInsnNode)insn);
@@ -64,7 +91,7 @@ public class BlockMetrics {
     }
 
     private void measure(InvokeDynamicInsnNode insn) {
-        this.invokeDynamic += charsValue(insn.desc);
+        this.invokeDynamic += descValue(insn.desc);
         measure((AbstractInsnNode)insn);
     }
 
@@ -74,12 +101,12 @@ public class BlockMetrics {
     }
 
     private void measure(MethodInsnNode insn) {
-        this.method += charsValue(insn.desc);
+        this.method += descValue(insn.desc);
         measure((AbstractInsnNode)insn);
     }
 
     private void measure(MultiANewArrayInsnNode insn) {
-        this.multiANewArray += charsValue(insn.desc) * insn.dims;
+        this.multiANewArray += descValue(insn.desc) * insn.dims;
         measure((AbstractInsnNode)insn);
     }
 
@@ -89,7 +116,7 @@ public class BlockMetrics {
     }
 
     private void measure(TypeInsnNode insn) {
-        this.type += charsValue(insn.desc);
+        this.type += descValue(insn.desc);
         measure((AbstractInsnNode)insn);
     }
 }
