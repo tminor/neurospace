@@ -50,4 +50,4 @@
                       (into [idx depth] (BlockMetrics/calculate insns))))
                   graph)))
   (distance [this that]
-    (ControlFlow/distance (->metrics this) (->metrics that))))
+    (ControlFlow/distanceSum (->metrics this) (->metrics that))))

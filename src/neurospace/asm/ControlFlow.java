@@ -119,9 +119,9 @@ public class ControlFlow {
      * @return         A list of values yielded by applying accumFn to
      *                 each pair of matching nodes
      */
-    public static <T> List<T> hausdorffEditDistance(List<List<Double>> set1,
-                                                    List<List<Double>> set2,
-                                                    Function<List<List<Double>>, T> accumFn) {
+    public static <T> List<T> editDistance(List<List<Double>> set1,
+                                           List<List<Double>> set2,
+                                           Function<List<List<Double>>, T> accumFn) {
         int set1Len = set1.size();
         int set2Len = set2.size();
 
@@ -153,18 +153,12 @@ public class ControlFlow {
                     min = dist;
                     minNode = new ArrayList<>(n2);
                 }
-
-                if (dist > max) {
-                    max = dist;
-                    maxNode = new ArrayList<>(n2);
-                }
             }
 
-            List<List<Double>> triple = new ArrayList<>();
-            triple.add(n1);
-            triple.add(minNode);
-            triple.add(maxNode);
-            accum.add(accumFn.apply(triple));
+            List<List<Double>> pair = new ArrayList<>();
+            pair.add(n1);
+            pair.add(minNode);
+            accum.add(accumFn.apply(pair));
         }
 
         return accum;
@@ -182,24 +176,22 @@ public class ControlFlow {
         return Math.sqrt(sum);
     }
 
-    public static double distance(List<List<Double>> set1,
-                                  List<List<Double>> set2) {
+    public static double distanceSum(List<List<Double>> set1,
+                                     List<List<Double>> set2) {
         Function<List<List<Double>>, Double> accumFn = (r) -> {
-            double min = euclideanDistance(r.get(0),
-                                           r.get(1));
+            double min = euclideanDistance(r.get(0), r.get(1));
 
             return min;
         };
 
-        double ret = 0.0;
+        double sum = 0.0;
 
-        List<Double> dists = hausdorffEditDistance(set1, set2, accumFn);
+        List<Double> dists = editDistance(set1, set2, accumFn);
 
         for (int i = 0; i < dists.size(); i++) {
-            double d = dists.get(i);
-            ret += d;
+            sum += dists.get(i);
         }
 
-        return ret;
+        return sum;
     }
 }
