@@ -17,4 +17,4 @@
   ;; :plugins [[lein-virgil "0.1.9"]]
   :global-vars {*warn-on-reflection* true}
   :main ^:skip-aot neurospace.core
-  :java-source-paths ["src/neurospace"])
+  :java-source-paths ["src/neurospace" "test/neurospace"])
