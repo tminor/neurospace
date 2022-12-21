@@ -35,7 +35,9 @@ public class BasicBlockGraph {
     public List<Integer> getBlock(int idx) {
         List<Integer> block = new ArrayList<>();
         block.add(idx);
-        block.addAll(successorsMap.get(idx));
+        if (successorsMap.get(idx) != null) {
+            block.addAll(successorsMap.get(idx));
+        }
         return block;
     }
 
@@ -44,7 +46,9 @@ public class BasicBlockGraph {
         List<AbstractInsnNode> insns = new ArrayList<>();
 
         for (int i = 0; i < idxs.size(); i++) {
-            insns.add(this.insns.get(i));
+            if (i < this.insns.size()) {
+                insns.add(this.insns.get(i));
+            }
         }
 
         return insns;
