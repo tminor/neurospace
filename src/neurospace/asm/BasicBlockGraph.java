@@ -28,6 +28,10 @@ public class BasicBlockGraph {
         return insns;
     }
 
+    public MutableGraph<Integer> getGraph() {
+        return graph;
+    }
+
     public List<Integer> getBlock(int idx) {
         List<Integer> block = new ArrayList<>();
         block.add(idx);
